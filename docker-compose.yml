@@ -1,0 +1,11 @@
+version: '3.3'
+
+services:
+    web:
+        build: .
+        container_name: sheetapp
+        command: uwsgi --ini /sheetflask/sheet/wsgi.ini
+        volumes:
+            - ./:/sheetflask
+        ports:
+            - "5000:5000"
