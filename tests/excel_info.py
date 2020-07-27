@@ -28,7 +28,6 @@ try:
     if response.status_code == requests.codes.ok:
         print(response.json().get('tabs'))
     else:
-        print(response)
-        # print(response.json().get('message', response.json()))
+        print(response.json().get('message', response.json()))
 except FileNotFoundError:
     print('File not found.')
