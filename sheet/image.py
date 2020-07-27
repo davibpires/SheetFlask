@@ -15,7 +15,7 @@ def convert():
     allowed_conversion_formats = ['jpeg', 'png']
 
     if 'file' not in request.files:
-        return jsonify(message='No file was sent'), 400
+        return jsonify(message='No file was sent.'), 400
 
     if 'format' not in request.form:
         return jsonify(message='You need to specify the format: {}.'.format(', '.join(allowed_conversion_formats))), 400

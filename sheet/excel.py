@@ -13,7 +13,7 @@ bp = Blueprint("excel", __name__, url_prefix="/excel")
 @jwt_required
 def info():
     if not request.data:
-        return jsonify(message='No binary file was sent.'), 404
+        return jsonify(message='No binary file was sent.'), 400
 
     try:
         file = BytesIO(request.data)
