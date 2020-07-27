@@ -27,7 +27,7 @@ def jwt_required(f):
                 return jsonify(message='Missing email parameter.'), 400
 
             if email not in app.config.get('AUTHORIZED_USERS', []):
-                return jsonify(message='Email not authorized.'), 403
+                return jsonify(message='Email not authorized.'), 401
         except jwt.InvalidSignatureError:
             return jsonify(message='Invalid signature.'), 401
         except jwt.ExpiredSignatureError:
