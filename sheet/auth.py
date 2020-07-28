@@ -28,6 +28,11 @@ def jwt_required(f):
 
             if email not in app.config.get('AUTHORIZED_USERS', []):
                 return jsonify(message='Email not authorized.'), 401
+
+            dropbox_access_token = data.get('access_token', '')
+
+            if dropbox_access_token and request.endpoint == 'image.convert_fromdropbox':
+                kwargs['access_token'] = dropbox_access_token
         except jwt.InvalidSignatureError:
             return jsonify(message='Invalid signature.'), 401
         except jwt.ExpiredSignatureError:
