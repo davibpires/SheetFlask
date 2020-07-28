@@ -11,14 +11,14 @@ parser.add_option('-e', '--email', action='store', dest='email', help='your emai
 parser.add_option('-f', '--file', action='store', dest='file', help='excel file', default='test.xlsx')
 options, args = parser.parse_args()
 
-token = generate_jwt(options.email)
+jwt_token = generate_jwt(options.email)
 
 try:
     with open(options.file, 'rb') as file:
         url = 'http://127.0.0.1:5000/excel/info'
         headers = {
             'content-type': 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-            'authorization': f'Bearer {token}'
+            'authorization': f'Bearer {jwt_token}'
         }
 
         payload = file.read()

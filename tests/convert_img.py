@@ -13,12 +13,12 @@ parser.add_option('-i', '--image', action='store', dest='image', help='image fil
 parser.add_option('-f', '--format', action='store', dest='format', help='conversion format', default='jpeg')
 options, args = parser.parse_args()
 
-token = generate_jwt(options.email)
+jwt_token = generate_jwt(options.email)
 
 try:
     with open(options.image, 'rb') as image:
         url = 'http://127.0.0.1:5000/image/convert'
-        headers = {'authorization': f'Bearer {token}'}
+        headers = {'authorization': f'Bearer {jwt_token}'}
 
         files = {'file': image}
         payload = {'format': options.format}

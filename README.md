@@ -1,6 +1,7 @@
 # SheetFlask
 > Flask API for working with spreadsheets and images.
 
+
 ## Table of Contents
 
 - [Getting Started](#getting-started)
@@ -9,14 +10,17 @@
   - [Authentication using JWT](#authentication-using-jwt)
   - [Tabs from the Excel file](#tabs-from-the-excel-file)
   - [Convert the format of an image](#convert-the-format-of-an-image)
+  - [Convert the format of a Dropbox image](#convert-the-format-of-a-dropbox-image)
 - [Tests with client functions](#tests-with-client-functions)
 - [License](#license)
 - [Contact](#contact)
+
 
 ## Getting Started
 
 [Python](https://www.python.org/) version >= 3.6 is required to run the project.
 You also need the [Docker](https://www.docker.com/) 17.06.0+ and Docker-Compose if you want run it with Docker container.
+
 
 ## Usage
 
@@ -31,6 +35,7 @@ docker-compose up
 The application uses [JWT](https://jwt.io/) to authenticate the user.
 You need to send a valid JWT token to use it.
 
+
 ## Authentication using JWT
 
 The JWT encryption key is set on config.py on SECRET_KEY parameter.
@@ -39,6 +44,10 @@ You also need to set a list of authorized e-mails on parameter AUTHORIZED_USERS 
 **The data sent with the token must follow the structure:**
 
 `{"email": "email@company.com"}`
+
+**The Dropbox access token sent together with data must follow the structure:**
+
+`{"email": "email@company.com", "access_token": "dropbox-access-token"}`
 
 **The token must be sent with the header:**
 
@@ -53,6 +62,7 @@ You also need to set a list of authorized e-mails on parameter AUTHORIZED_USERS 
 - `401 Unauthorized` invalid signature.
 - `401 Unauthorized` expired signature.
 - `401 Unauthorized` invalid token.
+
 
 ## Tabs from the Excel file
 
@@ -88,11 +98,13 @@ Send a Excel file as Binary File and return a JSON with the list of the tabs fro
   ]
 }
 ```
+
+
 ## Convert the format of an image
 
 **Definition**
 
-Send a image file and the "format" as Multipart Form and return the image converted. The formats can be: jpeg or png.
+Send a image file and the format as Multipart Form and return the image converted. The formats can be: jpeg or png.
 
 **Request**
 
@@ -111,15 +123,51 @@ Send a image file and the "format" as Multipart Form and return the image conver
 
 - [JWT Error Responses](#authentication-using-jwt)
 - `400 Bad Request` no file was sent.
-- `400 Bad Request` you need to specify the format: jpeg, png.
+- `400 Bad Request` missing format parameter.
 - `400 Bad Request` format not allowed. Allowed conversion formats: jpeg, png.
 - `200 OK` with the `converted image` on success,
+
+
+## Convert the format of a Dropbox image
+
+**Definition**
+
+Send the path for a image file in Dropbox and the format as Multipart Form and return the image converted. The formats can be: jpeg or png.
+
+It's also required the JWT token have the Dropbox access_token inside. See [Authentication using JWT](#authentication-using-jwt).
+
+**Request**
+
+`POST /image/convert/fromdropbox`
+
+**Authorization Header**
+
+`Authorization: Bearer <token>`
+
+**Parameters**
+
+- `path` Dropbox image file path *(required)*
+- `format` "jpeg" or "png" *(required)*
+
+**Response**
+
+- [JWT Error Responses](#authentication-using-jwt)
+- `401 Unauthorized` invalid Dropbox access token.
+- `404 Not Found` dropbox file not found.
+- `400 Bad Request` invalid Dropbox path.
+- `400 Bad Request` missing access_token parameter.
+- `400 Bad Request` missing path parameter.
+- `400 Bad Request` missing format parameter.
+- `400 Bad Request` format not allowed. Allowed conversion formats: jpeg, png.
+- `200 OK` with the `converted image` on success,
+
 
 ## Tests with client functions
 
 In the folder `tests`, you will find Python scripts to test the Endpoints as a Client.
 
 All commands here need to be used on CLI in the tests folder.
+
 
 ## excel_info.py
 
@@ -143,10 +191,10 @@ python3 excel_info.py -e email@company.com -f PATH/excel-file.xlsx
 
 **Response**
 
-- `Missing email parameter` on missing email.
 - `File not found` on file path error.
 - `Error message` on error.
 - `List of tabs` on success.
+
 
 ## convert_img.py
 
@@ -175,13 +223,43 @@ python3 convert_img.py -e email@company.com -i PATH/image-file.png -f jpeg
 
 **Response**
 
-- `Missing email parameter` on missing email.
 - `File not found` on file path error.
 - `Error message` on error.
 - `Image converted` and save the image with the name `converted` on the test folder on success.
 
+
+## convert_fromdropbox.py
+
+Client test for endpoint [Convert the format of a Dropbox image](#convert-the-format-of-a-dropbox-image).
+
+**Options**
+
+- `-h`, `--help` show help message
+- `-e EMAIL`, `--email=EMAIL` your email *(required)*
+- `-t TOKEN`, `--token=TOKEN` Dropbox access token *(required)*
+- `-p PATH`, `--path=PATH` Dropbox image file path *(required)*
+- `-f FORMAT`, `--format=FORMAT` conversion format
+
+**Command**
+
+```bash
+python3 convert_fromdropbox.py -e email@company.com -t dropbox-access-token -p /dropbox-image.png
+
+```
+
+```bash
+python3 convert_fromdropbox.py -e email@company.com -t dropbox-access-token -p /dropbox-image.png -f jpeg
+```
+
+**Response**
+
+- `Error message` on error.
+- `Image converted` and save the image with the name `converted` on the test folder on success.
+
+
 ## License
 SheetFlask is an open source project by Davi Barros Pires that is licensed under [MIT](https://opensource.org/licenses/MIT).
+
 
 ## Contact
 If you like this project, let me know.<br>
