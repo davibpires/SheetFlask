@@ -2,6 +2,7 @@ import jwt
 
 
 def generate_jwt(email, access_token=None):
+    """Generates a signed JWT."""
     json_dict = {'email': email}
 
     if access_token:

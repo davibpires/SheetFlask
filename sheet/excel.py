@@ -12,6 +12,7 @@ bp = Blueprint("excel", __name__, url_prefix="/excel")
 @bp.route('/info', methods=['POST'])
 @jwt_required
 def info():
+    """Gets the tabs of an Excel file and return alphabetically ordered."""
     if not request.data:
         return jsonify(message='No binary file was sent.'), 400
 

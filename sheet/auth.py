@@ -7,6 +7,7 @@ from sheet import app
 
 
 def jwt_required(f):
+    """Checks authorization through JWT."""
     @wraps(f)
     def decorated(*args, **kwargs):
         try:

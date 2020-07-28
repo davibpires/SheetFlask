@@ -1,6 +1,4 @@
-import imghdr
 import io
-import struct
 from io import BytesIO
 
 from PIL import Image
@@ -18,6 +16,7 @@ bp = Blueprint("image", __name__, url_prefix="/image")
 @bp.route('/convert', methods=['POST'])
 @jwt_required
 def convert():
+    """Converts a file image to jpeg or png."""
     if 'file' not in request.files:
         return jsonify(message='No file was sent.'), 400
 
@@ -39,6 +38,7 @@ def convert():
 @bp.route('/convert/fromdropbox', methods=['POST'])
 @jwt_required
 def convert_fromdropbox(access_token=None):
+    """Converts a Dropbox file image to jpeg or png."""
     if not access_token:
         return jsonify(message='Missing access_token parameter.'), 400
 
@@ -75,6 +75,7 @@ def convert_fromdropbox(access_token=None):
 
 
 def convert_image(image, img_format):
+    """Converts image to jpeg or png."""
     allowed_conversion_formats = ['jpeg', 'png']
 
     if img_format not in allowed_conversion_formats:
