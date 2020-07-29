@@ -1,9 +1,9 @@
 import io
 from io import BytesIO
 
-from PIL import Image
+from PIL import Image, UnidentifiedImageError
 from dropbox import dropbox
-from dropbox.exceptions import AuthError, ApiError
+from dropbox.exceptions import AuthError, ApiError, BadInputError
 from dropbox.stone_validators import ValidationError
 from flask import Blueprint, request, jsonify, send_file
 from werkzeug.utils import secure_filename
@@ -52,7 +52,7 @@ def convert_fromdropbox(access_token=None):
 
     try:
         dbx.users_get_current_account()
-    except AuthError:
+    except (AuthError, BadInputError):
         return jsonify(message="Invalid Dropbox access token."), 401
 
     path = request.form.get('path')
@@ -82,16 +82,19 @@ def convert_image(image, img_format):
         message = 'Format not allowed. Allowed conversion formats: {}.'.format(', '.join(allowed_conversion_formats))
         return jsonify(message=message), 400
 
-    img = Image.open(image).convert('RGBA')
+    try:
+        img = Image.open(image).convert('RGBA')
 
-    if img_format == 'jpeg':
-        bg = Image.new("RGB", img.size, (255, 255, 255))
-        bg.paste(img, img)
-        img = bg.copy()
-        bg.close()
+        if img_format == 'jpeg':
+            bg = Image.new("RGB", img.size, (255, 255, 255))
+            bg.paste(img, img)
+            img = bg.copy()
+            bg.close()
 
-    img_io = BytesIO()
-    img.save(img_io, img_format)
-    img_io.seek(0)
+        img_io = BytesIO()
+        img.save(img_io, img_format)
+        img_io.seek(0)
+    except UnidentifiedImageError:
+        return jsonify(message='The file is not an image.'), 400
 
     return img_io, 200

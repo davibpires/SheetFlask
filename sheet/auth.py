@@ -21,7 +21,7 @@ def jwt_required(f):
             if scheme != 'Bearer':
                 return jsonify(message='Invalid Authorization headers.'), 400
 
-            data = jwt.decode(token, app.config.get('SECRET_KEY'))
+            data = jwt.decode(token, app.config.get('SECRET_KEY'), algorithms=['HS256'])
             email = data.get('email')
 
             if not email:

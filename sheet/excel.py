@@ -23,6 +23,6 @@ def info():
         sheet_names = wb.sheetnames
         sheet_names.sort()
     except (KeyError, BadZipFile):
-        return jsonify(message='Error reading file.'), 500
+        return jsonify(message='The file is not a Excel file.'), 400
 
     return jsonify(tabs=sheet_names)

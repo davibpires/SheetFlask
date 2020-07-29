@@ -11,7 +11,8 @@
   - [Tabs from the Excel file](#tabs-from-the-excel-file)
   - [Convert the format of an image](#convert-the-format-of-an-image)
   - [Convert the format of a Dropbox image](#convert-the-format-of-a-dropbox-image)
-- [Tests with client functions](#tests-with-client-functions)
+- [Client test functions](#client-test-functions)
+- [Unit Tests](#unit-tests)
 - [License](#license)
 - [Contact](#contact)
 
@@ -29,6 +30,13 @@ On CLI, in the project directory, type:
 ```bash
 docker-compose up
 ```
+
+To run the Docker in background, type:
+
+```bash
+docker-compose up -d
+```
+
 
 ## Endpoints
 
@@ -162,11 +170,11 @@ It's also required the JWT token have the Dropbox access_token inside. See [Auth
 - `200 OK` with the `converted image` on success,
 
 
-## Tests with client functions
+## Client test functions
 
-In the folder `tests`, you will find Python scripts to test the Endpoints as a Client.
+In the folder `client`, you will find Python scripts to test the Endpoints as a Client.
 
-All commands here need to be used on CLI in the tests folder.
+All commands here need to be used on CLI in the client folder.
 
 
 ## excel_info.py
@@ -225,7 +233,7 @@ python3 convert_img.py -e email@company.com -i PATH/image-file.png -f jpeg
 
 - `File not found` on file path error.
 - `Error message` on error.
-- `Image converted` and save the image with the name `converted` on the test folder on success.
+- `Image converted` and save the image with the name `converted` on the client folder on success.
 
 
 ## convert_fromdropbox.py
@@ -254,7 +262,28 @@ python3 convert_fromdropbox.py -e email@company.com -t dropbox-access-token -p /
 **Response**
 
 - `Error message` on error.
-- `Image converted` and save the image with the name `converted` on the test folder on success.
+- `Image converted` and save the image with the name `converted` on the client folder on success.
+
+
+## Unit Tests
+
+In the folder `tests`, you will find the Unit Tests for the Endpoints.
+
+
+**Running unit tests**
+
+With the Docker running (See [Usage](#usage)), open the bash in the Docker, type:
+
+```bash
+docker exec -it sheetflask bash
+```
+
+To run the unit tests, type:
+
+
+```bash
+pytest -v
+```
 
 
 ## License
